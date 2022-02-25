@@ -303,7 +303,7 @@ function _M:insert(key, value, replace)
         return false
     end
     replace = replace or false
-    local parent = nil
+    local parent
     local sw = 0
     local fn = self._fn
     _linkUpdate(self, self._head)
@@ -337,8 +337,8 @@ function _M:remove(key)
         return nil
     end
     local value = self._value[key]
-    local child = nil
-    local parent = nil
+    local child
+    local parent
     if self._left[key] ~= nil and self._right[key] ~= nil then
         local old = key
         key = self._right[key]
