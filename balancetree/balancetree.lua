@@ -282,14 +282,10 @@ function _M:lower_entry(key)
         elseif hr < 0 then
             n = self._left[n]
             --print(n, "<=", ln, hr)
-            local p = self._parent[ln]
-            if p and fn(key, p) > 0 then
-                return p, self._value[p]
-            end
         else
             n = self._right[n]
             --print(ln, "=>", n, hr)
-            if not n then
+            if not n or fn(key, n) < 0 then
                 return ln, self._value[ln]
             end
         end
