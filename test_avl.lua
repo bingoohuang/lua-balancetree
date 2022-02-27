@@ -18,7 +18,7 @@ local AVL = require "avl"
 local root=AVL:new{}
 
 for i = 10, 36 do
-    root = root:insert(i)
+    root = root:insert(i, i+1)
 end
 
 root:dump()

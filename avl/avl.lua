@@ -36,26 +36,28 @@ function AVL:rebalance()
     return self, rotated
 end
 
-function AVL:insert(v)
+function AVL:insert(v, payload)
     if not self.value then
         self.value = v
+        self.payload = payload
         self.balance = 0
         return self, 1
     end
     local grow
     if v == self.value then
+        self.payload = payload
         return self, 0
     elseif v < self.value then
         if not self.left then
             self.left = self:new()
         end
-        self.left, grow = self.left:insert(v)
+        self.left, grow = self.left:insert(v, payload)
         self.balance = self.balance - grow
     else
         if not self.right then
             self.right = self:new()
         end
-        self.right, grow = self.right:insert(v)
+        self.right, grow = self.right:insert(v, payload)
         self.balance = self.balance + grow
     end
     self, rotated = self:rebalance()
@@ -126,7 +128,7 @@ function AVL:dump(depth)
     if self.right then
         self.right:dump(depth + 1)
     end
-    print(string.rep("    ", depth) .. self.value .. " (" .. self.balance .. ")")
+    print(string.rep("    ", depth) .. self.value .. " (" .. self.balance .. "," .. (self.payload or "nil") .. ")")
     if self.left then
         self.left:dump(depth + 1)
     end
@@ -136,14 +138,14 @@ end
 -- find key/value
 function AVL:find(key)
     if key == nil or not self.value then
-        return nil
+        return nil, nil
     end
 
     local n = self
     while n ~= nil do
         local hr = key - n.value
         if hr == 0 then
-            return n.value
+            return n.value, n.payload
         elseif hr < 0 then
             n = n.left
         else
@@ -155,7 +157,7 @@ end
 
 function AVL:lower(key, debug)
     if key == nil or not self.value then
-        return nil
+        return nil, nil
     end
 
     local n = self
@@ -163,7 +165,7 @@ function AVL:lower(key, debug)
         local hr = key - n.value
         local ln = n
         if hr == 0 then
-            return n.value
+            return n.value, n.payload
         elseif hr < 0 then
             n = n.left
             if debug then
@@ -175,11 +177,11 @@ function AVL:lower(key, debug)
                 print(ln.value, "=>", n and n.value or "nil", hr)
             end
             if not n or key - n.value < 0 then
-                return ln.value
+                return ln.value, ln.payload
             end
         end
     end
-    return nil
+    return nil, nil
 end
 
 return AVL
